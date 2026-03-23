@@ -25,9 +25,7 @@ dependencyResolutionManagement {
     }
 }
 
-plugins {
-    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
-}
+// Toolchain resolver disabled - using system JDK from GitHub Actions
 
 // prepare for git submodules
 val coreDir =
