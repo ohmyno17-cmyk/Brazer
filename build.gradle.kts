@@ -45,32 +45,9 @@ subprojects {
         }
     }
     
-    // Configure Java compilation to target JVM 21
+    // Configure Java compilation to target JVM 21 (without --release flag for Android compatibility)
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_21.toString()
         targetCompatibility = JavaVersion.VERSION_21.toString()
-        options.release.set(21)
-    }
-    
-    // Ensure Kotlin and Java JVM targets are consistent
-    afterEvaluate {
-        // For Android projects
-        pluginManager.withPlugin("com.android.library") {
-            extensions.findByType<com.android.build.gradle.LibraryExtension>()?.apply {
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_21
-                    targetCompatibility = JavaVersion.VERSION_21
-                }
-            }
-        }
-        
-        pluginManager.withPlugin("com.android.application") {
-            extensions.findByType<com.android.build.gradle.AppExtension>()?.apply {
-                compileOptions {
-                    sourceCompatibility = JavaVersion.VERSION_21
-                    targetCompatibility = JavaVersion.VERSION_21
-                }
-            }
-        }
     }
 }
