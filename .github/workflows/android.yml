@@ -63,6 +63,7 @@ jobs:
           printf "org.gradle.parallel=true\n" >> ./gradle.properties
           printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
           printf "isFullBuild=true\n" >> ./gradle.properties
+          rm -f gradle/gradle-daemon-jvm.properties || true
 
       - name: Update Sentry Secrets
         env:

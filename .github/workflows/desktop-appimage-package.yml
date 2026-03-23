@@ -42,10 +42,13 @@ jobs:
       - name: Install libfuse2
         run: sudo apt install -y libfuse2
 
-      - name: Update build product flavor
+      - name: Configure Gradle
         run: |
-          echo "" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
+          rm -f gradle/gradle-daemon-jvm.properties || true
 
       - name: Update Sentry Secrets
         env:
@@ -56,13 +59,13 @@ jobs:
           echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
-        run: ./gradlew exportLibraryDefinitions
+        run: ./gradlew exportLibraryDefinitions --no-daemon --stacktrace
 
       - name: Set up VLC
-        run: ./gradlew vlcSetup
+        run: ./gradlew vlcSetup --no-daemon --stacktrace
 
       - name: Build desktop AppImage package
-        run: ./gradlew composeApp:packageReleaseAppImage
+        run: ./gradlew composeApp:packageReleaseAppImage --no-daemon --stacktrace
 
       - name: Upload AppImage package
         uses: actions/upload-artifact@v4

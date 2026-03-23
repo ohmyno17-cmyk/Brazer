@@ -39,10 +39,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Update build product flavor
+      - name: Configure Gradle
         run: |
-          echo "" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
+          rm -f gradle/gradle-daemon-jvm.properties || true
 
       - name: Update Sentry Secrets
         env:
@@ -53,13 +56,13 @@ jobs:
           echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
-        run: ./gradlew exportLibraryDefinitions
+        run: ./gradlew exportLibraryDefinitions --no-daemon --stacktrace
 
       - name: Set up VLC
-        run: ./gradlew vlcSetup
+        run: ./gradlew vlcSetup --no-daemon --stacktrace
 
       - name: Build desktop DMG package
-        run: ./gradlew packageReleaseDmg
+        run: ./gradlew packageReleaseDmg --no-daemon --stacktrace
 
       - name: Upload DMG package
         uses: actions/upload-artifact@v4
@@ -89,10 +92,13 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Update build product flavor
+      - name: Configure Gradle
         run: |
-          echo "" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
+          rm -f gradle/gradle-daemon-jvm.properties || true
 
       - name: Update Sentry Secrets
         env:
@@ -103,13 +109,13 @@ jobs:
           echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
-        run: ./gradlew exportLibraryDefinitions
+        run: ./gradlew exportLibraryDefinitions --no-daemon --stacktrace
 
       - name: Set up VLC
-        run: ./gradlew vlcSetup
+        run: ./gradlew vlcSetup --no-daemon --stacktrace
 
       - name: Build desktop DMG package
-        run: ./gradlew packageReleaseDmg
+        run: ./gradlew packageReleaseDmg --no-daemon --stacktrace
 
       - name: Upload DMG package
         uses: actions/upload-artifact@v4
