@@ -1,0 +1,179 @@
+name: Auto Build & Release APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'main'
+      - 'dev'
+    paths-ignore:
+      - 'README.md'
+      - 'fastlane/**'
+      - 'assets/**'
+      - '.github/**/*.md'
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    name: Build & Release APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Generate signing keystore
+        run: |
+          keytool -genkey -v \
+            -keystore brazzer-release.keystore \
+            -alias brazzer \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -storepass brazzer123 \
+            -keypass brazzer123 \
+            -dname "CN=Brazzer, OU=App, O=Brazzer, L=Jakarta, ST=Jakarta, C=ID"
+
+      - name: Create local.properties
+        run: |
+          echo "sdk.dir=$ANDROID_HOME" > local.properties
+
+      - name: Update build product flavor
+        run: |
+          echo "" >> ./gradle.properties
+          echo "isFullBuild=true" >> ./gradle.properties
+
+      - name: Generate aboutLibraries.json
+        run: ./gradlew exportLibraryDefinitions
+
+      - name: Build Release APK
+        run: ./gradlew androidApp:assembleRelease
+
+      - name: Sign APK
+        run: |
+          BUILD_TOOLS=$(ls $ANDROID_HOME/build-tools/ | tail -n 1)
+          for apk in androidApp/build/outputs/apk/release/*-unsigned.apk; do
+            if [ -f "$apk" ]; then
+              filename=$(basename "$apk" -unsigned.apk)
+              $ANDROID_HOME/build-tools/$BUILD_TOOLS/zipalign -v -p 4 "$apk" "${filename}-aligned.apk"
+              $ANDROID_HOME/build-tools/$BUILD_TOOLS/apksigner sign \
+                --ks brazzer-release.keystore \
+                --ks-pass pass:brazzer123 \
+                --key-pass pass:brazzer123 \
+                --out "${filename}-signed.apk" \
+                "${filename}-aligned.apk"
+            fi
+          done
+
+      - name: Get version info
+        id: version
+        run: |
+          VERSION_NAME=$(grep "versionName" androidApp/build.gradle.kts | head -1 | sed 's/.*= "//' | sed 's/"//' || echo "1.0.0")
+          VERSION_CODE=$(grep "versionCode" androidApp/build.gradle.kts | head -1 | sed 's/.*= //' | sed 's/\.get()//' || echo "1")
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "date=$(date +'%Y%m%d')" >> $GITHUB_OUTPUT
+
+      - name: Rename APK
+        run: |
+          for apk in *-signed.apk; do
+            if [ -f "$apk" ]; then
+              mv "$apk" "Brazzer-v${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.date }}.apk"
+            fi
+          done
+          ls -la *.apk
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Brazzer-Release-APK
+          path: |
+            *.apk
+            androidApp/build/outputs/apk/release/*.apk
+
+      - name: Create GitHub Release
+        if: github.event_name == 'push'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version_name }}-${{ steps.version.outputs.date }}
+          name: Brazzer ${{ steps.version.outputs.version_name }} (${{ steps.version.outputs.date }})
+          body: |
+            ## 🎵 Brazzer Release ${{ steps.version.outputs.version_name }}
+
+            ### 📱 Installation
+            1. Download the APK below
+            2. Enable "Install from unknown sources" in Android settings
+            3. Install the APK
+
+            ### ⚠️ Note
+            This is an automatically signed release build.
+
+            ---
+
+            **Commit:** ${{ github.sha }}
+            **Branch:** ${{ github.ref_name }}
+          files: |
+            *.apk
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload keystore for backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: Keystore-Backup
+          path: brazzer-release.keystore
+          retention-days: 90
+
+  build-debug:
+    name: Build Debug APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'gradle'
+
+      - name: Grant execute permission
+        run: chmod +x gradlew
+
+      - name: Update build flavor
+        run: |
+          echo "" >> ./gradle.properties
+          echo "isFullBuild=false" >> ./gradle.properties
+
+      - name: Build Debug APK
+        run: ./gradlew androidApp:assembleDebug
+
+      - name: Upload Debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: Brazzer-Debug-APK
+          path: androidApp/build/outputs/apk/debug/*.apk
