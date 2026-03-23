@@ -1,4 +1,5 @@
 name: Build release APK (FOSS)
+
 on:
   workflow_dispatch:
   push:
@@ -25,16 +26,20 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
           submodules: 'recursive'
 
-      - name: set up JDK 21
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          java-version: 21
-          distribution: "zulu"
+          java-version: '21'
+          distribution: 'temurin'
           cache: 'gradle'
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
 
       - name: Update build product flavor
         run: |
@@ -60,9 +65,10 @@ jobs:
         run: |
           BUILD_TOOL_VERSION=$(ls /usr/local/lib/android/sdk/build-tools/ | tail -n 1)
           echo "BUILD_TOOL_VERSION=$BUILD_TOOL_VERSION" >> $GITHUB_ENV
-          echo Last build tool version is: $BUILD_TOOL_VERSION
+          echo "Last build tool version is: $BUILD_TOOL_VERSION"
 
-      - uses: kevin-david/zipalign-sign-android-release@v2
+      - name: Sign APK
+        uses: kevin-david/zipalign-sign-android-release@v2
         id: sign_app
         with:
           releaseDirectory: androidApp/build/outputs/apk/release
@@ -72,10 +78,11 @@ jobs:
           keyPassword: ${{ secrets.KEY_PASSWORD }}
           zipAlign: true
         env:
-            BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
+          BUILD_TOOLS_VERSION: ${{ env.BUILD_TOOL_VERSION }}
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app
+          name: app-release
           path: androidApp/build/outputs/apk/release/*-signed.apk
+          retention-days: 30
