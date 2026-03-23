@@ -51,7 +51,7 @@ val mediaDir =
         File(rootDir, "./core/media")
     }
 
-rootProject.name = "SimpMusic"
+rootProject.name = "brazzer"
 include(
     ":androidApp",
     ":composeApp",

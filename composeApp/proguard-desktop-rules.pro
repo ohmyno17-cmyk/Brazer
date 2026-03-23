@@ -94,9 +94,9 @@
 
 -dontwarn org.slf4j.impl.StaticLoggerBinder
 -dontwarn kotlinx.serialization.internal.ClassValueReferences
--keep class com.maxrave.simpmusic.data.model.** { *; }
--keep class com.maxrave.simpmusic.extension.AllExtKt { *; }
--keep class com.maxrave.simpmusic.extension.AllExtKt$* { *; }
+-keep class com.brazzer.data.model.** { *; }
+-keep class com.brazzer.extension.AllExtKt { *; }
+-keep class com.brazzer.extension.AllExtKt$* { *; }
 -keep class com.maxrave.kotlinytmusicscraper.extension.MapExtKt$* { *; }
 
 ## Removes all Logs as they cause perfomance issues in prod
@@ -245,11 +245,11 @@
 
 -keep class com.maxrave.kotlinytmusicscraper.** { *; }
 
--keep class org.simpmusic.lyrics.parser.** { *; }
--keep class org.simpmusic.lyrics.models.** { *; }
--keep class org.simpmusic.nowplayingcenter.** { *; }
+-keep class org.brazzer.lyrics.parser.** { *; }
+-keep class org.brazzer.lyrics.models.** { *; }
+-keep class org.brazzer.nowplayingcenter.** { *; }
 -keep class io.github.selemba1000.** { *; }
--keep class com.simpmusic.lyrics.parser.** { *; }
+-keep class com.brazzer.lyrics.parser.** { *; }
 
 # dbus-java (used by JMTC/NPYC for Linux MPRIS)
 -keep class org.freedesktop.dbus.** { *; }

@@ -1,8 +1,8 @@
-# CLAUDE.md - SimpMusic Project Guide for AI Agents
+# CLAUDE.md - brazzer Project Guide for AI Agents
 
 ## 📋 Project Overview
 
-**SimpMusic** is a FOSS (Free and Open Source Software) YouTube Music client for Android and Desktop, built with Compose Multiplatform.
+**brazzer** is a FOSS (Free and Open Source Software) YouTube Music client for Android and Desktop, built with Compose Multiplatform.
 
 ### Main Purpose
 - Stream music from YouTube Music and YouTube for free, ad-free, with background playback
@@ -102,7 +102,7 @@ Service modules:
 - **kotlinYtmusicScraper/**: YouTube Music API scraper
 - **spotify/**: Spotify Web API integration (Canvas, Lyrics)
 - **aiService/**: AI features (OpenAI, Gemini integration)
-- **lyricsService/**: Lyrics fetching (LRCLIB, SimpMusic Lyrics, BetterLyrics)
+- **lyricsService/**: Lyrics fetching (LRCLIB, brazzer Lyrics, BetterLyrics)
 - **kizzy/**: Discord Rich Presence
 - **ktorExt/**: Ktor extensions for networking
 
@@ -449,7 +449,7 @@ if (getPlatform() == Platform.Android) {
 - **320kbps audio stream option**: Higher quality streaming preference
 - **Parallel download**: Improved download speed
 - **Character-level animated lyrics**: Word-by-word lyrics with spring animations
-- **SimpMusic Chart**: Chart playlists integrated into Library screen
+- **brazzer Chart**: Chart playlists integrated into Library screen
 - **Favorites**: Liked songs feature with UI integration
 - **Custom OpenAI base URL**: Support for compatible API endpoints
 
@@ -458,7 +458,7 @@ if (getPlatform() == Platform.Android) {
 - **Analytics/Local Tracking**: Track top artists, albums, and tracks locally (no remote tracking)
 - **Auto Backup**: Automatic backup settings
 - **Custom Title Bar**: Desktop window control with transparency support
-- **SimpMusic Lyrics voting**: Vote functionality for community lyrics
+- **brazzer Lyrics voting**: Vote functionality for community lyrics
 
 ### New Features (post-1.0.4, dev branch)
 - **Deep link support**: `simpmusic://` and `simpmusic.org` URL schemes
@@ -488,7 +488,7 @@ After completing any of the following types of changes, the AI agent **MUST** up
 
 ---
 
-*This document helps AI Agents quickly understand the SimpMusic project. Update regularly when there are major changes to architecture or structure.*
+*This document helps AI Agents quickly understand the brazzer project. Update regularly when there are major changes to architecture or structure.*
 
 **Last updated**: 2026-03-14
 **Project version**: Check latest release on GitHub
