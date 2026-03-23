@@ -28,9 +28,10 @@ tasks.register<Delete>("Clean") {
 }
 
 subprojects {
+    // Configure Kotlin compilation to target JVM 21
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(JvmTarget.JVM_21)
             if (project.findProperty("enableComposeCompilerReports") == "true") {
                 arrayOf("reports", "metrics").forEach {
                     freeCompilerArgs.addAll(
@@ -44,9 +45,32 @@ subprojects {
         }
     }
     
-    // Fix JVM target compatibility
+    // Configure Java compilation to target JVM 21
     tasks.withType<JavaCompile>().configureEach {
         sourceCompatibility = JavaVersion.VERSION_21.toString()
         targetCompatibility = JavaVersion.VERSION_21.toString()
+        options.release.set(21)
+    }
+    
+    // Ensure Kotlin and Java JVM targets are consistent
+    afterEvaluate {
+        // For Android projects
+        pluginManager.withPlugin("com.android.library") {
+            extensions.findByType<com.android.build.gradle.LibraryExtension>()?.apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
+                }
+            }
+        }
+        
+        pluginManager.withPlugin("com.android.application") {
+            extensions.findByType<com.android.build.gradle.AppExtension>()?.apply {
+                compileOptions {
+                    sourceCompatibility = JavaVersion.VERSION_21
+                    targetCompatibility = JavaVersion.VERSION_21
+                }
+            }
+        }
     }
 }
