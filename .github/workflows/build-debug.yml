@@ -16,6 +16,7 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -35,6 +36,15 @@ jobs:
       - name: Validate Gradle Wrapper
         uses: gradle/actions/wrapper-validation@v4
 
+      - name: Debug - List directories
+        run: |
+          echo "=== Root directory ==="
+          ls -la
+          echo "=== Core directory ==="
+          ls -la core/ || echo "core directory not found"
+          echo "=== Core subdirectories ==="
+          ls -la core/*/ 2>/dev/null || echo "No subdirectories in core"
+
       - name: Configure Gradle
         run: |
           printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
@@ -43,7 +53,7 @@ jobs:
           printf "isFullBuild=false\n" >> ./gradle.properties
 
       - name: Build Debug APK (FOSS)
-        run: ./gradlew androidApp:assembleDebug --no-daemon --stacktrace
+        run: ./gradlew androidApp:assembleDebug --no-daemon --stacktrace --info
 
       - name: Rename APK
         run: |

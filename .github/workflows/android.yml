@@ -30,6 +30,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: 'recursive'
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -38,8 +40,22 @@ jobs:
           distribution: 'temurin'
           cache: 'gradle'
 
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-home-cache-cleanup: true
+
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Debug - List directories
+        run: |
+          echo "=== Root directory ==="
+          ls -la
+          echo "=== Core directory ==="
+          ls -la core/ || echo "core directory not found"
+          echo "=== Core subdirectories ==="
+          ls -la core/*/ 2>/dev/null || echo "No subdirectories in core"
 
       - name: Configure Gradle
         run: |
@@ -53,11 +69,11 @@ jobs:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN }}" > ./local.properties
-          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN }}' > ./local.properties
+          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
-        run: ./gradlew exportLibraryDefinitions --no-daemon
+        run: ./gradlew exportLibraryDefinitions --no-daemon --stacktrace
 
       - name: Build release APK
         run: ./gradlew androidApp:assembleRelease --no-daemon --stacktrace
