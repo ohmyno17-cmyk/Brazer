@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
@@ -29,6 +30,7 @@ tasks.register<Delete>("Clean") {
 subprojects {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
             if (project.findProperty("enableComposeCompilerReports") == "true") {
                 arrayOf("reports", "metrics").forEach {
                     freeCompilerArgs.addAll(
@@ -40,5 +42,11 @@ subprojects {
                 }
             }
         }
+    }
+    
+    // Fix JVM target compatibility
+    tasks.withType<JavaCompile>().configureEach {
+        sourceCompatibility = JavaVersion.VERSION_21.toString()
+        targetCompatibility = JavaVersion.VERSION_21.toString()
     }
 }
