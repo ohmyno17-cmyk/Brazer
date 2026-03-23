@@ -16,7 +16,14 @@ jobs:
         with:
           submodules: 'recursive'
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Verify submodules
+        run: |
+          echo "=== Checking submodules ==="
+          git submodule status
+          echo "=== Core directory contents ==="
+          ls -la core/ || echo "core directory not found"
+          ls -la core/common/ 2>/dev/null || echo "core/common not found"
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -35,15 +42,6 @@ jobs:
 
       - name: Validate Gradle Wrapper
         uses: gradle/actions/wrapper-validation@v4
-
-      - name: Debug - List directories
-        run: |
-          echo "=== Root directory ==="
-          ls -la
-          echo "=== Core directory ==="
-          ls -la core/ || echo "core directory not found"
-          echo "=== Core subdirectories ==="
-          ls -la core/*/ 2>/dev/null || echo "No subdirectories in core"
 
       - name: Configure Gradle
         run: |
