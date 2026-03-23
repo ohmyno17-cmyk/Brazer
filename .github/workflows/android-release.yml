@@ -41,27 +41,24 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
 
       - name: Update Sentry Secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN }}' > ./local.properties
-          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN }}" > ./local.properties
+          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Update environment variables
         env:
           BASE_64_SIGNING_KEY: ${{ secrets.BASE_64_SIGNING_KEY }}
         run: |
           echo "$BASE_64_SIGNING_KEY" | base64 -d > simpmusic.jks
-
-      - name: Update build product flavor
-        run: |
-          echo "isFullBuild=true" >> ./gradle.properties
 
       - name: Build full release APK
         env:
@@ -100,19 +97,16 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=false\n" >> ./gradle.properties
 
       - name: Update environment variables
         env:
           BASE_64_SIGNING_KEY: ${{ secrets.BASE_64_SIGNING_KEY }}
         run: |
           echo "$BASE_64_SIGNING_KEY" | base64 -d > simpmusic.jks
-
-      - name: Update build product flavor
-        run: |
-          echo "isFullBuild=false" >> ./gradle.properties
 
       - name: Build foss release APK
         env:
@@ -154,18 +148,18 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
 
       - name: Update Sentry Secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_JVM }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN_JVM }}' > ./local.properties
-          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN_JVM }}" > ./local.properties
+          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
         run: ./gradlew exportLibraryDefinitions --no-daemon
@@ -206,18 +200,18 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
 
       - name: Update Sentry Secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_JVM }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN_JVM }}' > ./local.properties
-          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN_JVM }}" > ./local.properties
+          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
         run: ./gradlew exportLibraryDefinitions --no-daemon
@@ -258,18 +252,18 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
 
       - name: Update Sentry Secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_JVM }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN_JVM }}' > ./local.properties
-          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN_JVM }}" > ./local.properties
+          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
         run: ./gradlew exportLibraryDefinitions --no-daemon
@@ -310,18 +304,18 @@ jobs:
 
       - name: Configure Gradle
         run: |
-          echo "org.gradle.daemon=false" >> ./gradle.properties
-          echo "org.gradle.parallel=true" >> ./gradle.properties
-          echo "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8" >> ./gradle.properties
-          echo "isFullBuild=true" >> ./gradle.properties
+          printf "\norg.gradle.daemon=false\n" >> ./gradle.properties
+          printf "org.gradle.parallel=true\n" >> ./gradle.properties
+          printf "org.gradle.jvmargs=-Xmx4g -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8\n" >> ./gradle.properties
+          printf "isFullBuild=true\n" >> ./gradle.properties
 
       - name: Update Sentry Secrets
         env:
           SENTRY_DSN: ${{ secrets.SENTRY_DSN_JVM }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
         run: |
-          echo 'SENTRY_DSN=${{ secrets.SENTRY_DSN_JVM }}' > ./local.properties
-          echo "SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
+          printf 'SENTRY_DSN=%s\n' "${{ secrets.SENTRY_DSN_JVM }}" > ./local.properties
+          printf 'SENTRY_AUTH_TOKEN=%s\n' "${{ secrets.SENTRY_AUTH_TOKEN }}" >> ./local.properties
 
       - name: Generate aboutLibraries.json
         run: ./gradlew exportLibraryDefinitions --no-daemon
